@@ -1,4 +1,4 @@
-# Flight Deal Tracker
+#Flight Deal Tracker
 
 Backend en Python (FastAPI) para consultar precios de vuelos y guardar histórico para detectar ofertas.
 
