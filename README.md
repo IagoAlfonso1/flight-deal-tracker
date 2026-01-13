@@ -17,3 +17,10 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
 pip install -r requirements.txt
+
+## Environment variables
+Create a local `.env` file (do NOT commit it) with:
+
+```env
+AMADEUS_CLIENT_ID=your_id
+AMADEUS_CLIENT_SECRET=your_secret
