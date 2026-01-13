@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from app.amadeus_client import has_amadeus_config, get_access_token
+
 
 # Carga variables desde .env si existe (en local)
 load_dotenv()
@@ -18,3 +20,14 @@ def config_check():
 
     configured = bool(client_id) and bool(client_secret)
     return {"amadeus_configured": configured}
+
+@app.get("/amadeus/token-status")
+def amadeus_token_status():
+    if not has_amadeus_config():
+        return {"ok": False, "reason": "missing_amadeus_credentials"}
+
+    try:
+        token = get_access_token()
+        return {"ok": True, "token_preview": token[:10] + "..."}
+    except Exception as e:
+        return {"ok": False, "reason": str(e)}
