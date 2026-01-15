@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from app.amadeus_client import has_amadeus_config, get_access_token
+from app.models import FlightSearchRequest
+
 
 
 # Carga variables desde .env si existe (en local)
@@ -31,3 +33,13 @@ def amadeus_token_status():
         return {"ok": True, "token_preview": token[:10] + "..."}
     except Exception as e:
         return {"ok": False, "reason": str(e)}
+
+@app.post("/flights/search")
+def flights_search(payload: FlightSearchRequest):
+    # Por ahora: stub para validar input + dejar listo el contrato
+    return {
+        "ok": True,
+        "message": "search endpoint ready (stub)",
+        "request": payload.model_dump(),
+        "next": "Tomorrow: call Amadeus API and return real offers"
+    }
