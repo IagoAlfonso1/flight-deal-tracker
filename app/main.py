@@ -1,10 +1,8 @@
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from app.amadeus_client import has_amadeus_config, get_access_token
+from app.amadeus_client import has_amadeus_config,search_flight_offers
 from app.models import FlightSearchRequest
-
-
 
 # Carga variables desde .env si existe (en local)
 load_dotenv()
@@ -36,13 +34,29 @@ def amadeus_token_status():
 
 @app.post("/flights/search")
 def flights_search(payload: FlightSearchRequest):
-    # Por ahora: stub para validar input + dejar listo el contrato
-    return {
-        "ok": True,
-        "message": "search endpoint ready (stub)",
-        "request": payload.model_dump(),
-        "next": "Tomorrow: call Amadeus API and return real offers"
-    }
+    if not has_amadeus_config():
+        return {
+            "ok": False,
+            "reason": "missing_amadeus_credentials",
+            "request": payload.model_dump(),
+            "hint": "Create a local .env using .env.example (do not commit secrets)."
+        }
+
+    try:
+        data = search_flight_offers(
+            origin=payload.origin,
+            destination=payload.destination,
+            departure_date=payload.departure_date.isoformat(),
+            return_date=payload.return_date.isoformat() if payload.return_date else None,
+            adults=payload.adults,
+            non_stop=payload.non_stop,
+            max_results=payload.max_results,
+        )
+        return {"ok": True, "data": data}
+    except Exception as e:
+        # no filtramos tokens/secret; devolvemos error genérico
+        return {"ok": False, "reason": "amadeus_request_failed", "detail": str(e)}
+
 
 @app.get("/flights/search/example")
 def flights_search_example():
