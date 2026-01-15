@@ -43,3 +43,14 @@ def flights_search(payload: FlightSearchRequest):
         "request": payload.model_dump(),
         "next": "Tomorrow: call Amadeus API and return real offers"
     }
+
+@app.get("/flights/search/example")
+def flights_search_example():
+    return {
+        "origin": "EZE",
+        "destination": "BCN",
+        "departure_date": "2026-02-10",
+        "return_date": "2026-02-25",
+        "adults": 1
+    }
+

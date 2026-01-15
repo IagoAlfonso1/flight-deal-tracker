@@ -1,5 +1,7 @@
 import os
 import requests
+from app.settings import AMADEUS_CLIENT_ID, AMADEUS_CLIENT_SECRET
+
 
 AMADEUS_TOKEN_URL = "https://test.api.amadeus.com/v1/security/oauth2/token"
 
