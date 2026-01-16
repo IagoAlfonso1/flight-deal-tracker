@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Flight Deal Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <h1>Flight Deal Tracker</h1>
+
+  <form id="searchForm">
+    <label>Origen (IATA): <input name="origin" value="EZE" maxlength="3" /></label><br/>
+    <label>Destino (IATA): <input name="destination" value="BCN" maxlength="3" /></label><br/>
+    <label>Salida: <input name="departure_date" value="10/02/2026" /></label><br/>
+    <label>Vuelta: <input name="return_date" value="25/02/2026" /></label><br/>
+    <label>Adultos: <input name="adults" type="number" value="1" min="1" max="9" /></label><br/>
+    <label>Directo: <input name="non_stop" type="checkbox" /></label><br/>
+    <button type="submit">Buscar</button>
+  </form>
+
+  <p id="status"></p>
+
+  <table border="1" cellpadding="6" id="results" style="display:none;">
+    <thead>
+      <tr>
+        <th>Precio</th>
+        <th>Ruta</th>
+        <th>Salida</th>
+        <th>Llegada</th>
+        <th>Stops</th>
+        <th>Aerolíneas</th>
+        <th>Duración</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

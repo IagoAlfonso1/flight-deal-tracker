@@ -3,11 +3,25 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from app.amadeus_client import has_amadeus_config,search_flight_offers
 from app.models import FlightSearchRequest
+from fastapi import Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from app.normalizers import summarize_offers
+
 
 # Carga variables desde .env si existe (en local)
 load_dotenv()
 
 app = FastAPI(title="Flight Deal Tracker")
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
 
 @app.get("/health")
 def health():
@@ -68,3 +82,22 @@ def flights_search_example():
         "adults": 1
     }
 
+@app.post("/flights/search/summary")
+def flights_search_summary(payload: FlightSearchRequest):
+    if not has_amadeus_config():
+        return {"ok": False, "reason": "missing_amadeus_credentials"}
+
+    try:
+        raw = search_flight_offers(
+            origin=payload.origin,
+            destination=payload.destination,
+            departure_date=payload.departure_date.isoformat(),
+            return_date=payload.return_date.isoformat() if payload.return_date else None,
+            adults=payload.adults,
+            non_stop=payload.non_stop,
+            max_results=payload.max_results,
+        )
+        offers = summarize_offers(raw)
+        return {"ok": True, "offers": [o.model_dump() for o in offers]}
+    except Exception as e:
+        return {"ok": False, "reason": "amadeus_request_failed", "detail": str(e)}
